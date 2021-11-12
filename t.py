@@ -1,10 +1,10 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, right
 import numpy as np
 import cv2
-
+import math
 class Button_Func:
     def convolution(self,filter,img):
         img3 = []
@@ -22,24 +22,38 @@ class Button_Func:
         return img2
     
     def load_image(self):
-        img = cv2.imread("b.jpg")
+        cv2.destroyAllWindows()
+        img = cv2.imread("house.jpg")
         print("Height : {:d}\nWidth : {:d}".format(img.shape[0],img.shape[1]))
         cv2.imshow("img",img)
     def color_seperation(self):
+        cv2.destroyAllWindows()
         img = cv2.imread("b.jpg")
-        img3 = []
+        imgb = []
+        imgg = []
+        imgr = []
         for i in range(len(img)):
-            img2 = []
+            imgbr = []
+            imggr = []
+            imgrr = []
             for j in range(len(img[0])):
-                img2.append([img[i][j][0],np.uint8(0),np.uint8(0)])
+                imgbr.append([img[i][j][0],np.uint8(0),np.uint8(0)])
             for j in range(len(img[0])):
-                img2.append([np.uint8(0),img[i][j][1],np.uint8(0)])
+                imggr.append([np.uint8(0),img[i][j][1],np.uint8(0)])
             for j in range(len(img[0])):
-                img2.append([np.uint8(0),np.uint8(0),img[i][j][2]])
-            img3.append(img2)
-        img2 = np.array(img3)
-        cv2.imshow("img",img2)
+                imgrr.append([np.uint8(0),np.uint8(0),img[i][j][2]])
+            imgb.append(imgbr)
+            imgg.append(imggr)
+            imgr.append(imgrr)
+        imgb = np.array(imgb)
+        imgg = np.array(imgg)
+        imgr = np.array(imgr)
+        cv2.imshow("imgb",imgb)
+        cv2.imshow("imgg",imgg)
+        cv2.imshow("imgr",imgr)
+        cv2.waitKey(0)
     def color_transformations(self):
+        cv2.destroyAllWindows()
         img = cv2.imread("house.jpg")
         img3 = []
         for i in range(len(img)):
@@ -50,16 +64,72 @@ class Button_Func:
         img2 = np.array(img3)
         cv2.imshow("img",img2)
     def blending(self):
-        pass
+        cv2.destroyAllWindows()
+        img1 = cv2.imread("house.jpg")
+        img2 = cv2.imread("b.jpg")
+        img1 = cv2.resize(img1,(600,600))
+        img2 = cv2.resize(img2,(600,600))
+        img3 = []
+        img4 = []
+        for i in range(len(img1)):
+            left = []
+            right = []
+            for j in range(len(img1[0])):
+                left.append(img1[i][j])
+            for j in range(len(img1[0])):
+                left.append([255,255,255])
+            for j in range(len(img2[0])):
+                right.append([255,255,255])
+            for j in range(len(img2[0])):
+                right.append(img2[i][j])
+            img3.append(left)
+            img4.append(right)
+        img3 = np.uint8(np.array(img3))
+        img4 = np.uint8(np.array(img4))
+        cv2.namedWindow('image_win')
+        def update(x):
+            value = cv2.getTrackbarPos('R','image_win')
+            img = cv2.addWeighted(img3,value/255,img4,1-value/255,0)
+            cv2.imshow("image_win",img)
+        cv2.createTrackbar('R','image_win',0,255,update)
+        cv2.setTrackbarPos('R','image_win',125)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        
     def gaussian_blur1(self):
-        pass
+        cv2.destroyAllWindows()
+        img = cv2.imread("house.jpg")
+        img = cv2.GaussianBlur(img, (5, 5), 5)
+        cv2.imshow("img",img)
     def bilateral_filter(self):
-        pass
+        cv2.destroyAllWindows()
+        img = cv2.imread("house.jpg")
+        img = cv2.bilateralFilter(img, 9, 90, 90)
+        cv2.imshow("img",img)
     def median_filter(self):
-        pass
+        cv2.destroyAllWindows()
+        img = cv2.imread("house.jpg")
+        img3 = cv2.medianBlur(img,3)
+        img5 = cv2.medianBlur(img,5)
+        cv2.imshow("img3",img3)
+        cv2.imshow("img5",img5)
+        cv2.waitKey(0)
+            
     def gaussian_blur2(self):
-        pass
+        cv2.destroyAllWindows()
+        img = cv2.imread("house.jpg")
+        img3 = []
+        for i in range(len(img)):
+            img2 = []
+            for j in range(len(img[0])):
+                img2.append(np.uint8(img[i][j][0]/3 + img[i][j][1]/3 + img[i][j][2]/3))
+            img3.append(img2)
+        img2 = np.array(img3)
+        filter=[[16/209,26/209,16/209],[26/209,41/209,26/209],[16/209,26/209,16/209]]
+        img2 = self.convolution(filter,img2)
+        cv2.imshow("img",img2)
     def sobel_x(self):
+        cv2.destroyAllWindows()
         img = cv2.imread("house.jpg")
         img3 = []
         for i in range(len(img)):
@@ -72,6 +142,7 @@ class Button_Func:
         img2 = self.convolution(filter,img2)
         cv2.imshow("img",img2)
     def sobel_y(self):
+        cv2.destroyAllWindows()
         img = cv2.imread("house.jpg")
         img3 = []
         for i in range(len(img)):
@@ -84,7 +155,8 @@ class Button_Func:
         img2 = self.convolution(filter,img2)
         cv2.imshow("img",img2)
     def magnitude(self):
-        img = cv2.imread("b.jpg")
+        cv2.destroyAllWindows()
+        img = cv2.imread("house.jpg")
         img3 = []
         for i in range(len(img)):
             img2 = []
@@ -112,13 +184,30 @@ class Button_Func:
         cv2.imshow("img",img2)
         
     def resize(self):
-        pass
+        cv2.destroyAllWindows()
+        img = cv2.imread("house.jpg")
+        img = cv2.resize(img,(256,256))
+        cv2.imshow("img",img)
     def translation(self):
-        pass
+        cv2.destroyAllWindows()
     def rotation_scaling(self):
-        pass
+        cv2.destroyAllWindows()
+        img = cv2.imread("house.jpg")
+        img2 = img
+        arr = [[math.cos(math.pi/180),-math.sin(math.pi/180)],[math.sin(math.pi/180),math.cos(math.pi/180)]]
+        print(arr)
+        for i in range(len(img)):
+            for j in range(len(img[0])):
+                pass        
+            
+
+
+
+        cv2.imshow("img",img)
+        
     def shearing(self):
-        pass
+        cv2.destroyAllWindows()
+        
         
         
         
