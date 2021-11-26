@@ -12,7 +12,9 @@ from torchsummary import summary
 from record import record
 
 def main():
-    device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+    #device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+
+    device = 'cpu'
 
     print(device)
 
@@ -20,12 +22,16 @@ def main():
 
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
     testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
-    trainLoader = torch.utils.data.DataLoader(trainset, batch_size=32, shuffle=True, num_workers=4)
-    testLoader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=4)
+    trainLoader = torch.utils.data.DataLoader(trainset, batch_size=32, shuffle=True, num_workers=2)
+    testLoader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
 
     classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+    
+    net = models.vgg16()
 
-    net = models.vgg16().to(device)
+    net.classifier[6] = nn.Linear(4096,10)
+
+    net.to(device)
 
     print(net)
     
@@ -33,7 +39,7 @@ def main():
 
     criterion = nn.CrossEntropyLoss()
     lr = 0.001
-    epochs = 90
+    epochs = 30
     optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9)
     loss = 999
     for epoch in range(epochs):

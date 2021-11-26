@@ -36,7 +36,9 @@ plt.yticks(fontsize = 12)
 plt.ylim(-0.5, 3.0)                                          # 設定y軸繪圖範圍
 plt.plot(epoch, trainloss, color = 'blue', linewidth = 2)
 
+plt.tight_layout()
 
+plt.savefig("trainplot.png")
 
 plt.show()
 

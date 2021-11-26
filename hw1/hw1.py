@@ -5,30 +5,28 @@ from PyQt5.QtCore import pyqtSlot, right
 import numpy as np
 import cv2
 class Button_Func:
+    
     def convolution(self,filter,img):
         img3 = []
         for i in range(1,len(img)-1):
             img2 = []
             for j in range(1,len(img[0])-1):
-                conv1 = img[i-1][j-1]*filter[0][0] + img[i-1][j]*filter[0][1] + img[i-1][j+1]*filter[0][2] + img[i][j-1]*filter[1][0] + img[i][j]*filter[1][1]   + img[i][j+1]*filter[1][2] + img[i+1][j-1]*filter[2][0] + img[i+1][j]*filter[2][1] + img[i+1][j+1]*filter[2][2]
+                conv1 = np.int32(img[i-1][j-1])*filter[0][0] + np.int32(img[i-1][j])*filter[0][1] + np.int32(img[i-1][j+1])*filter[0][2] + np.int32(img[i][j-1])*filter[1][0] + np.int32(img[i][j])*filter[1][1] + np.int32(img[i][j+1])*filter[1][2] + np.int32(img[i+1][j-1])*filter[2][0] + np.int32(img[i+1][j])*filter[2][1] + np.int32(img[i+1][j+1])*filter[2][2]
+                conv1 = abs(conv1)
                 if conv1 > 255:
                     conv1 = 255
-                if conv1 < 0:
-                    conv1 = 0
                 img2.append(np.uint8([conv1]))
             img3.append(img2)
-        img2 = np.array(img3)
-        return img2
+        img2 = np.array(img3,dtype=object)
+        return np.uint8(img2)
+
     def load_image(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q1_Image/Sun.jpg")
         print("Height : {:d}\nWidth : {:d}".format(img.shape[0],img.shape[1]))
-        while 1:
-            cv2.imshow("Hw1-1",img)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
+        cv2.imshow("Sun.jpg",img)
+        cv2.waitKey(0)
+
     def color_seperation(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q1_Image/Sun.jpg")
@@ -37,27 +35,21 @@ class Button_Func:
         b = cv2.merge([b,zeros,zeros])
         g = cv2.merge([zeros,g,zeros])
         r = cv2.merge([zeros,zeros,r])
-        while 1:
-            cv2.imshow("B Channel",b)
-            cv2.imshow("G Channel",g)
-            cv2.imshow("R Channel",r)
-            dead = cv2.waitKey(1)    
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
+        cv2.imshow("B Channel",b)
+        cv2.imshow("G Channel",g)
+        cv2.imshow("R Channel",r)
+        cv2.waitKey(0)
+
     def color_transformations(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q1_Image/Sun.jpg")
         b,g,r = cv2.split(img)
         img1 = np.uint8(b/3 + g/3 + r/3)
         img2 = np.uint8(0.07*b + 0.72*g + 0.21*r)
-        while 1:
-            cv2.imshow("l2",img1)
-            cv2.imshow("l1",img2)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
+        cv2.imshow("l2",img1)
+        cv2.imshow("l1",img2)
+        cv2.waitKey(0)
+
     def blending(self):
         cv2.destroyAllWindows()
         img1 = cv2.imread("Q1_Image/Dog_Strong.jpg")
@@ -69,192 +61,131 @@ class Button_Func:
             cv2.imshow("Blend",img)
         cv2.createTrackbar('bar','Blend',0,255,update)
         cv2.setTrackbarPos('bar','Blend',100)
-        while 1:
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
-    
-        
+        cv2.waitKey(0)
         
     def gaussian_blur1(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q2_Image/Lenna_whiteNoise.jpg")
-        img = cv2.GaussianBlur(img, (5, 5), 5)
-        while 1:
-            cv2.imshow("Gaussian Blur",img)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
+        img2 = cv2.GaussianBlur(img, (5, 5), 5)
+        cv2.imshow("Gaussian Blur",img2)
+        cv2.waitKey(0)
+
     def bilateral_filter(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q2_Image/Lenna_whiteNoise.jpg")
-        img = cv2.bilateralFilter(img, 9, 90, 90)
-        while 1:
-            cv2.imshow("Bilateral Filter",img)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
+        img2 = cv2.bilateralFilter(img, 9, 90, 90)
+        cv2.imshow("Bilateral Filter",img2)
+        cv2.waitKey(0)
+
     def median_filter(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q2_Image/Lenna_pepperSalt.jpg")
         img3 = cv2.medianBlur(img,3)
         img5 = cv2.medianBlur(img,5)
-        while 1:
-            cv2.imshow("Median Filter 3x3",img3)
-            cv2.imshow("Median Filter 5x5",img5)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
-            
+        cv2.imshow("Median Filter 3x3",img3)
+        cv2.imshow("Median Filter 5x5",img5)
+        cv2.waitKey(0)
+
     def gaussian_blur2(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q3_Image/House.jpg")
-        img3 = []
-        for i in range(len(img)):
-            img2 = []
-            for j in range(len(img[0])):
-                img2.append(np.uint8(img[i][j][0]/3 + img[i][j][1]/3 + img[i][j][2]/3))
-            img3.append(img2)
-        img2 = np.array(img3)
-        filter=[[16/209,26/209,16/209],[26/209,41/209,26/209],[16/209,26/209,16/209]]
-        img2 = self.convolution(filter,img2)
-        while 1:
-            cv2.imshow("Gaussian Blur",img2)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
+        b,g,r = cv2.split(img)
+        img1 = np.uint8(b/3 + g/3 + r/3)
+        filter=[[0.045,0.122,0.045],[0.122,0.332,0.122],[0.045,0.122,0.045]]
+        img2 = self.convolution(filter,img1)
+
+        cv2.imshow("Gaussian Blur",img2)
+        cv2.waitKey(0)
+        
     def sobel_x(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q3_Image/House.jpg")
-        img3 = []
-        for i in range(len(img)):
-            img2 = []
-            for j in range(len(img[0])):
-                img2.append(np.uint8(img[i][j][0]/3 + img[i][j][1]/3 + img[i][j][2]/3))
-            img3.append(img2)
-        img2 = np.array(img3)
+        b,g,r = cv2.split(img)
+        img1 = np.uint8(b/3 + g/3 + r/3)
+        filter=[[0.045,0.122,0.045],[0.122,0.332,0.122],[0.045,0.122,0.045]]
+        img1 = self.convolution(filter,img1)
         filter=[[-1,0,1],[-2,0,2],[-1,0,1]]
-        img2 = self.convolution(filter,img2)
-        while 1:
-            cv2.imshow("Sobel X",img2)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
+        img1 = self.convolution(filter,img1)
+        cv2.imshow("Sobel X",img1)
+        cv2.waitKey(0)
+
     def sobel_y(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q3_Image/House.jpg")
-        img3 = []
-        for i in range(len(img)):
-            img2 = []
-            for j in range(len(img[0])):
-                img2.append(np.uint8(img[i][j][0]/3 + img[i][j][1]/3 + img[i][j][2]/3))
-            img3.append(img2)
-        img2 = np.array(img3)
+        b,g,r = cv2.split(img)
+        img1 = np.uint8(b/3 + g/3 + r/3)
+        filter=[[0.045,0.122,0.045],[0.122,0.332,0.122],[0.045,0.122,0.045]]
+        img1 = self.convolution(filter,img1)
         filter=[[1,2,1],[0,0,0],[-1,-2,-1]]
-        img2 = self.convolution(filter,img2)
-        while 1:
-            cv2.imshow("Sobel Y",img2)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
+        img1 = self.convolution(filter,img1)
+        cv2.imshow("Sobel Y",img1)
+        cv2.waitKey(0)
+
     def magnitude(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q3_Image/House.jpg")
-        img3 = []
-        for i in range(len(img)):
-            img2 = []
-            for j in range(len(img[0])):
-                img2.append(np.uint8(img[i][j][0]/3 + img[i][j][1]/3 + img[i][j][2]/3))
-            img3.append(img2)
-        img2 = np.array(img3)
+        b,g,r = cv2.split(img)
+        img1 = np.uint8(b/3 + g/3 + r/3)
+        filter=[[0.045,0.122,0.045],[0.122,0.332,0.122],[0.045,0.122,0.045]]
+        img1 = self.convolution(filter,img1)
         filterx=[[-1,0,1],[-2,0,2],[-1,0,1]]
         filtery=[[1,2,1],[0,0,0],[-1,-2,-1]]
-        conv1 = self.convolution(filterx,img2)
-        conv2 = self.convolution(filtery,img2)
+        conv1 = self.convolution(filterx,img1)
+        conv2 = self.convolution(filtery,img1)
         img3 = []
         for i in range(len(conv1)):
             img2 = []
             for j in range(len(conv1[0])):
             
-                a = conv1[i][j] + conv2[i][j]
+                a = (((np.int32(conv1[i][j]))**2 + np.int32((conv2[i][j]))**2)**0.5) / (2**0.5)
                 
-                if a > 255:
-                    a = 255
-            
                 img2.append(np.uint8(a))
             img3.append(img2)
-        img2 = np.array(img3)
-        while 1:
-            cv2.imshow("Magnitude",img2)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
-        
+        img2 = np.array(img3).astype(np.uint8)
+        cv2.imshow("Magnitude",img2)
+        cv2.waitKey(0)
+
     def resize(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q4_Image/SQUARE-01.png")
         img = cv2.resize(img,(256,256))
-        while 1:
-            cv2.imshow("Resize",img)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
+        cv2.imshow("Resize",img)
+        cv2.waitKey(0)
+
     def translation(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q4_Image/SQUARE-01.png")
         img = cv2.resize(img,(256,256))
         h = np.float32([[1,0,0],[0,1,60]])
         img = cv2.warpAffine(img,h,(400,300))
-        while 1:
-            cv2.imshow("Translation",img)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
+        cv2.imshow("Translation",img)
+        cv2.waitKey(0)
 
     def rotation_scaling(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q4_Image/SQUARE-01.png")
         img = cv2.resize(img,(256,256))
-        h = cv2.getRotationMatrix2D((128,228),10,0.5)
+        h = np.float32([[1,0,0],[0,1,60]])
         img = cv2.warpAffine(img,h,(400,300))
-        while 1:
-            cv2.imshow("Rotation,Scaling",img)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
-        
+        h = cv2.getRotationMatrix2D((128,188),10,0.5)
+        img = cv2.warpAffine(img,h,(400,300))
+        cv2.imshow("Rotation,Scaling",img)
+        cv2.waitKey(0)
+    
     def shearing(self):
         cv2.destroyAllWindows()
         img = cv2.imread("Q4_Image/SQUARE-01.png")
-        img = cv2.resize(img,(150,150))
-        h = np.float32([[1,0,60],[0,1,100]])
+        img = cv2.resize(img,(256,256))
+        h = np.float32([[1,0,0],[0,1,60]])
+        img = cv2.warpAffine(img,h,(400,300))
+        h = cv2.getRotationMatrix2D((128,188),10,0.5)
         img = cv2.warpAffine(img,h,(400,300))
         h1 = np.float32([[50,50],[200,50],[50,200]])
         h2 = np.float32([[10,100],[200,50],[100,250]])
         h = cv2.getAffineTransform(h1,h2)
         img = cv2.warpAffine(img,h,(400,300))
-        while 1:
-            cv2.imshow("Shearing",img)
-            dead = cv2.waitKey(1)
-            if dead != -1:
-                cv2.destroyAllWindows()
-                break
-
-        
-        
-        
-        
+        cv2.imshow("Shearing",img)
+        cv2.waitKey(0)
 
 class UI:
     
@@ -311,5 +242,6 @@ class UI:
         self.widget.setWindowTitle("2021 Opencvdl Hw1")
         self.widget.show() 
         sys.exit(self.app.exec_())
+        
 if __name__ == '__main__':
     ui = UI()
