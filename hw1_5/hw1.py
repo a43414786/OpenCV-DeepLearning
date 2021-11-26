@@ -12,7 +12,7 @@ from torchvision.models.vgg import vgg16
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
-
+import os
 class Showtrainimg():
 
     def __init__(self):
@@ -61,7 +61,11 @@ class Showtrainimg():
             plt.xticks([])
             plt.yticks([])
         plt.tight_layout()
-        plt.show()
+        plt.savefig("a.jpg")
+        plt.close()
+        img = cv2.imread("a.jpg")
+        cv2.imshow("img",img)
+        cv2.waitKey(0)
 
     def predict_func(self,input):
         input = input.numpy().tolist()
@@ -98,34 +102,21 @@ class Showtrainimg():
         plt.ylabel('y_axis')
 
         plt.tight_layout()
-        plt.show()
+        plt.savefig("a.jpg")
+        plt.close()
+        img = cv2.imread("a.jpg")
+        cv2.imshow("img",img)
+        cv2.waitKey(0)
 
     def imshow(self,img):
         img = img / 2 + 0.5   
         npimg = img.numpy()   
         plt.imshow(np.transpose(npimg, (1, 2, 0)))
 
-class Button_Func:
-
-    def hyper(self):
-        print("hyperparameters:\nbatch size : {:d}\nlearning rate: {:.3f}\noptimizer: {:s}".format(32,0.001,"SGD"))
-        
-    def model(self):
-        model = vgg16()
-        model.classifier[6] = nn.Linear(4096,10)
-        print(model)
-
-    def accuracy(self):
-        img = cv2.imread("trainplot.png")
-        cv2.imshow("img",img)
-        cv2.waitKey(0)
-
-          
+         
 class UI:
     
     def __init__(self):
-        self.data = Showtrainimg()
-        self.button_func = Button_Func()
         self.setUI()
     
     def func(self,name,position,button_func):
@@ -147,17 +138,30 @@ class UI:
 
     def train(self):
         self.data.trainimg()
-        return
+        
+    def hyper(self):
+        print("hyperparameters:\nbatch size : {:d}\nlearning rate: {:.3f}\noptimizer: {:s}".format(32,0.001,"SGD"))
+        
+    def model(self):
+        summary(self.data.model.cuda(),input_size=(3,224,224))
+        self.data.model.to('cpu')
+    
+    def accuracy(self):
+        img = cv2.imread("trainplot.png")
+        cv2.imshow("img",img)
+        cv2.waitKey(0)
 
     def test(self):
         textboxValue = self.textbox.text()
         if textboxValue == '':
             return
-        self.data.test(int(textboxValue))
         self.textbox.setText("")
+        self.data.test(int(textboxValue))
 
     def setUI(self):
         
+        self.data = Showtrainimg()
+
         self.app = QApplication(sys.argv)
     
         self.widget = QWidget()
@@ -165,9 +169,9 @@ class UI:
         self.label1 = self.label("VGG16 TEST"  ,(32,32))
 
         self.train_image_button = self.func("1. show Train Images"          ,(32,64)    ,self.train)
-        self.hyper_button = self.func("2. Show HyperParameter"              ,(32,96)    ,self.button_func.hyper)
-        self.model_button = self.func("3. Show Model Shortcut"              ,(32,128)    ,self.button_func.model)
-        self.accuracy_button = self.func("4. show Accuracy"                 ,(32,160)   ,self.button_func.accuracy)
+        self.hyper_button = self.func("2. Show HyperParameter"              ,(32,96)    ,self.hyper)
+        self.model_button = self.func("3. Show Model Shortcut"              ,(32,128)    ,self.model)
+        self.accuracy_button = self.func("4. show Accuracy"                 ,(32,160)   ,self.accuracy)
         self.test_button = self.func("5. Test"                              ,(32,224)   ,self.test)
 
         self.textbox = QLineEdit(self.widget)
