@@ -16,8 +16,14 @@ import numpy as np
 class Showtrainimg():
 
     def __init__(self):
-    
-        self.classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+        
+        self.model = vgg16()
+
+        self.model.classifier[6] = nn.Linear(4096,10)
+
+        self.model.load_state_dict(torch.load("model"))
+
+        self.classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
     
         transform = transforms.Compose( [transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5),
@@ -43,7 +49,7 @@ class Showtrainimg():
         
     def trainimg(self):
         imgidx = np.random.randint(0,50000,(9))
-        print(imgidx)
+
         counter = 0
         
         plt.figure()
@@ -57,17 +63,39 @@ class Showtrainimg():
         plt.tight_layout()
         plt.show()
 
+    def predict_func(self,input):
+        input = input.numpy().tolist()
+        input = torch.tensor([input])
+        predict = self.model(input).detach().numpy()
+        predict = np.reshape(predict,(10))
+        total = 0
+        for i in range(len(predict)):
+            if predict[i] < 0:
+                predict[i] = 0
+            else:
+                total += predict[i]
+        
+        for i in range(len(predict)):
+            predict[i] /= total
+        return predict
+
     def test(self,input):
         
         input = input % 10000
 
-        plt.figure()
+        plt.figure(figsize=(10,5))
         
         plt.subplot(1, 2, 1)
-        plt.title(self.classes[self.testlbls[input]])
         self.imshow(torchvision.utils.make_grid(self.testimgs[input]))
         plt.xticks([])
         plt.yticks([])  
+        plt.subplot(1, 2, 2)
+        predict = self.predict_func(self.testimgs[input])
+        x = np.arange(len(self.classes))
+        plt.bar(x, predict, color=['blue','blue','blue','blue','blue','blue','blue','blue','blue','blue'])
+        plt.xticks(x, self.classes)
+        plt.xlabel('x_axis')
+        plt.ylabel('y_axis')
 
         plt.tight_layout()
         plt.show()
@@ -106,6 +134,8 @@ class UI:
         button.setFont(QFont('Arial', 12))
         button.move(position[0],position[1])
         button.clicked.connect(button_func)
+        button.resize(200,28)
+        button.setStyleSheet("QPushButton{text-align : left;}")
         return button
     
     def label(self,name,position):
@@ -117,9 +147,12 @@ class UI:
 
     def train(self):
         self.data.trainimg()
+        return
 
     def test(self):
         textboxValue = self.textbox.text()
+        if textboxValue == '':
+            return
         self.data.test(int(textboxValue))
         self.textbox.setText("")
 
@@ -139,7 +172,7 @@ class UI:
 
         self.textbox = QLineEdit(self.widget)
         self.textbox.move(32,196)
-        self.textbox.resize(200,28)
+        self.textbox.resize(200,24)
 
         self.widget.setGeometry(50,50,50+280,50+240)
         self.widget.setWindowTitle("2021 Opencvdl Hw1")

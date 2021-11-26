@@ -199,6 +199,8 @@ class UI:
         button.setFont(QFont('Arial', 12))
         button.move(position[0],position[1])
         button.clicked.connect(button_func)
+        button.resize(200,30)
+        button.setStyleSheet("QPushButton{text-align : left;}")
         return button
     
     def label(self,name,position):
@@ -219,8 +221,8 @@ class UI:
 
         self.label1 = self.label("1. Image Processing"  ,(32,32))
         self.label2 = self.label("2. Image Smoothing"   ,(256,32))
-        self.label3 = self.label("3. Edge Detection"    ,(448,32))
-        self.label4 = self.label("4. Transformation"    ,(640,32))
+        self.label3 = self.label("3. Edge Detection"    ,(480,32))
+        self.label4 = self.label("4. Transformation"    ,(704,32))
 
         self.load_image_button = self.func("1.1 Load Image"                         ,(32,64+gap1)    ,self.button_func.load_image)
         self.color_seperation_button = self.func("1.2 Color Seperation"             ,(32,96+gap1*2)    ,self.button_func.color_seperation)
@@ -229,16 +231,16 @@ class UI:
         self.gaussian_blur1_button = self.func("2.1 Gaussian Blur"                  ,(256,64+gap2*1)   ,self.button_func.gaussian_blur1)
         self.bilateral_filter_button = self.func("2.2 Bilateral Filter"             ,(256,96+gap2*2)   ,self.button_func.bilateral_filter)
         self.median_filter_button = self.func("2.3 Median Filter"                   ,(256,128+gap2*3)   ,self.button_func.median_filter)
-        self.gaussian_blur2_button = self.func("3.1 Gaussian Blur"                  ,(448,64+gap1*1)   ,self.button_func.gaussian_blur2)
-        self.sobel_x_button = self.func("3.2 Sobel X"                               ,(448,96+gap1*2)   ,self.button_func.sobel_x)
-        self.sobel_y_button = self.func("3.3 Sobel Y"                               ,(448,128+gap1*3)   ,self.button_func.sobel_y)
-        self.magnitude_button = self.func("3.4 Magnitude"                           ,(448,160+gap1*4)  ,self.button_func.magnitude)
-        self.resize_button = self.func("4.1 Resize"                                 ,(640,64+gap1*1)   ,self.button_func.resize)
-        self.translation_button = self.func("4.2 Translation"                       ,(640,96+gap1*2)   ,self.button_func.translation)
-        self.rotation_scaling_button = self.func("4.3 Rotation,Scaling"             ,(640,128+gap1*3)   ,self.button_func.rotation_scaling)
-        self.shearing_button = self.func("4.4 Shearing"                             ,(640,160+gap1*4)  ,self.button_func.shearing)
+        self.gaussian_blur2_button = self.func("3.1 Gaussian Blur"                  ,(480,64+gap1*1)   ,self.button_func.gaussian_blur2)
+        self.sobel_x_button = self.func("3.2 Sobel X"                               ,(480,96+gap1*2)   ,self.button_func.sobel_x)
+        self.sobel_y_button = self.func("3.3 Sobel Y"                               ,(480,128+gap1*3)   ,self.button_func.sobel_y)
+        self.magnitude_button = self.func("3.4 Magnitude"                           ,(480,160+gap1*4)  ,self.button_func.magnitude)
+        self.resize_button = self.func("4.1 Resize"                                 ,(704,64+gap1*1)   ,self.button_func.resize)
+        self.translation_button = self.func("4.2 Translation"                       ,(704,96+gap1*2)   ,self.button_func.translation)
+        self.rotation_scaling_button = self.func("4.3 Rotation,Scaling"             ,(704,128+gap1*3)   ,self.button_func.rotation_scaling)
+        self.shearing_button = self.func("4.4 Shearing"                             ,(704,160+gap1*4)  ,self.button_func.shearing)
         
-        self.widget.setGeometry(50,50,50+800,50+600)
+        self.widget.setGeometry(50,50,50+920,50+600)
         self.widget.setWindowTitle("2021 Opencvdl Hw1")
         self.widget.show() 
         sys.exit(self.app.exec_())
